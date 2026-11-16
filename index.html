@@ -96,7 +96,6 @@
     </div>
     <h2>Where to run</h2>
     <canvas id="solar" width="760" height="236" role="img" aria-label="Solar system map. Click a planet or the Moon to run there."></canvas>
-    <div class="row" style="margin:8px 0 0"><span style="width:auto">Classic Earth scenes</span><div id="envs"></div></div>
     <div id="worldInfo"></div>
     <div id="menuLevels">
       <h2>Round</h2>
@@ -212,11 +211,7 @@ const WORLDS = {
   jupiter: { label:'Jupiter', blurb:'Jupiter — gravity 2.53× Earth (24.8 m/s²). You fall fast, so power boots give short, snappy jumps and a quicker run across the cloud tops.' },
   saturn:  { label:'Saturn',  blurb:'Saturn — gravity 1.06× Earth (10.4 m/s²): almost like home. Golden cloud tops beneath the rings.' },
   uranus:  { label:'Uranus',  blurb:'Uranus — gravity 0.89× Earth (8.7 m/s²): jumps are a touch higher. Ice spires and falling diamonds under a tilted ring.' },
-  neptune: { label:'Neptune', blurb:'Neptune — gravity 1.14× Earth (11.2 m/s²): jumps are a little lower. Deep blue, racing winds and a dark storm.' },
-  park:    { label:'Park',    blurb:'Classic: a sunny park.' },
-  beach:   { label:'Beach',   blurb:'Classic: a sandy beach.' },
-  snow:    { label:'Snowy hills', blurb:'Classic: snowy hills and pines.' },
-  city:    { label:'City at night', blurb:'Classic: rooftops at night.' }
+  neptune: { label:'Neptune', blurb:'Neptune — gravity 1.14× Earth (11.2 m/s²): jumps are a little lower. Deep blue, racing winds and a dark storm.' }
 };
 for (const k in WORLDS) if (!WORLDS[k].levels) WORLDS[k].levels = [k, k, k];
 function setEnv(idx) {
@@ -1953,11 +1948,6 @@ function buildMenu() {
   [['music', 'Music'], ['sound', 'Sound effects']].forEach(([k, label]) => {
     const b = document.createElement('button'); b.className = 'chip' + (opts[k] ? ' sel' : ''); b.textContent = `${label}: ${opts[k] ? 'on' : 'off'}`;
     b.onclick = () => { opts[k] = !opts[k]; audio(); applyVol(); save(); buildMenu(); }; au.appendChild(b);
-  });
-  const ev = $('envs'); ev.innerHTML = '';
-  ['park', 'beach', 'snow', 'city'].forEach(k => {
-    const b = document.createElement('button'); b.className = 'chip' + (worldName === k ? ' sel' : ''); b.textContent = WORLDS[k].label;
-    b.onclick = () => pickWorld(k); ev.appendChild(b);
   });
   { const w = WORLDS[worldName], f = FACTS[worldName];
     $('worldInfo').innerHTML = f ? `<h3>${w.label}</h3><p>${f.intro}</p><p class="g">${w.blurb.replace(/^[^—]*— /, '').replace(/^./, m => m.toUpperCase())}</p><p class="g">${['Easy', 'Medium', 'Hard'].map((n, i) => n + ': ' + (THEMES[w.levels[i]].scene || w.label)).join(' · ')}</p><b>Special things to look for</b><ul>${f.see.map(t => `<li>${t}</li>`).join('')}</ul>`
