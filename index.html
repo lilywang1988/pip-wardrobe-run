@@ -439,7 +439,7 @@ const keys = { left:false, right:false, jump:false };
 let jumpBuf = 0;
 
 function startLevel(i) {
-  levelIdx = i; setEnv(i); L = LEVELS[i](); lives = 3; gemCount = 0; checked = false; parts = []; toast = null;
+  levelIdx = i; setEnv(i); L = LEVELS[i](); lives = 3; gemCount = 0; checked = false; parts = []; toast = FACT1[envName] ? { text: FACT1[envName], life: 330 } : null;
   spawn(); state = 'play'; audio(); mStep = 0;
   $('menu').classList.remove('on'); $('msg').classList.remove('on');
 }
@@ -568,7 +568,7 @@ function step() {
       die(isDog() ? 'Yuck — fish is for cats!' : 'Yuck — bones are for dogs!'); return;
     }
   }
-  if (!checked && P.x > L.check * T) { checked = true; burst(L.check * T + 6, GROUND * T - 60, '#ffd45e', 14); sfx.check(); }
+  if (!checked && P.x > L.check * T) { checked = true; burst(L.check * T + 6, GROUND * T - 60, '#ffd45e', 14); sfx.check(); if (FACT2[envName]) toast = { text: FACT2[envName], life: 300 }; }
   if (hit(P, { x:L.goal * T + 6, y:-6000, w:T * 1.6, h:6000 + GROUND * T })) finish();
 
   for (const p of parts) { p.x += p.vx; p.y += p.vy; p.vy += 0.3; p.life--; }
@@ -1262,6 +1262,42 @@ const BG = {
   }
 };
 
+/* ---------- brief fact labels pinned to the scenery ---------- */
+function tag(x, y, text, dy) {
+  if (x < 30 || x > VW - 30) return;
+  c.font = 'bold 12px ui-rounded, "Trebuchet MS", sans-serif';
+  const w = c.measureText(text).width + 18, lx = Math.max(w / 2 + 6, Math.min(VW - w / 2 - 6, x)), ly = y + (dy || -24);
+  c.strokeStyle = 'rgba(255,255,255,.75)'; c.lineWidth = 1; c.beginPath(); c.moveTo(x, y); c.lineTo(lx, ly); c.stroke();
+  c.fillStyle = '#fff'; dot(c, x, y, 2.4);
+  c.fillStyle = 'rgba(8,10,30,.62)'; rr(c, lx - w / 2, ly - 10, w, 20, 10);
+  c.fillStyle = '#fff'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(text, lx, ly + 1); c.textBaseline = 'alphabetic';
+}
+const TAGS = {
+  moon() { tag(720 - camX * 0.015, 168, 'Earth, 384,000 km away', 26); },
+  mercury() { tag(760 - camX * 0.01, 150, 'The Sun looks 3× wider here', 44); },
+  venus() { const id = 1 + Math.floor(camX * 0.2 / 460), x = 460 - (camX * 0.2) % 460 + 140, h = 150 + hash(id) * 70; tag(x, 470 - h - 6, 'Volcano: Venus has the most', -30); },
+  mars() {
+    tag(200 - camX * 0.01, 80, 'Phobos', 22); tag(330 - camX * 0.01, 58, 'Deimos', 22);
+    const id = 1 + Math.floor(camX * 0.2 / 380), x0 = 380 - (camX * 0.2) % 380 + 60, w = 120 + hash(id) * 80, h = 60 + hash(id + 3) * 55; tag(x0 + w / 2, 470 - h, 'Mesa', -22);
+    tag(((tick * 0.6 - camX * 0.3) % (VW + 300) + VW + 300) % (VW + 300) - 150, 286, 'Dust devil', -22);
+  },
+  jupiter() {
+    tag(((640 - camX * 0.06 + tick * 0.05) % (VW + 400) + VW + 400) % (VW + 400) - 200, 300, 'Great Red Spot: a storm wider than Earth', 30);
+    tag(262 - camX * 0.01, 112, 'Moons', 24);
+  },
+  saturn() { tag(VW * 0.55 - camX * 0.02 - 60, 262, 'Rings of ice and rock', -30); tag(360 - camX * 0.012, 150, 'Titan, its giant moon', 28); },
+  uranus() { tag(285 - camX * 0.02, 254, 'Sideways rings: Uranus is tipped over', 28); },
+  neptune() { tag(640 - camX * 0.05, 150, 'Great dark storm', -26); tag(170 - camX * 0.012, 106, 'Triton orbits backwards', 26); }
+};
+const FACT1 = { grass:'Earth: the only world known to have life', ocean:'Earth: 71% of the surface is ocean', sky:'Earth: air scatters sunlight, so the sky is blue',
+  moon:'Moon: no air, so the sky is black even by day', mercury:'Mercury: 430 °C by day, −180 °C at night', venus:'Venus: the hottest planet, about 465 °C',
+  mars:'Mars: red from rusty iron dust', jupiter:'Jupiter: 1,300 Earths would fit inside', saturn:'Saturn: light enough to float in water',
+  uranus:'Uranus: it may rain diamonds here', neptune:'Neptune: winds reach 2,000 km/h' };
+const FACT2 = { grass:'Grasslands grow on every continent but Antarctica', ocean:'The ocean holds 97% of Earth\u2019s water', sky:'Clouds are tiny drops of water and ice',
+  moon:'Footprints here can last millions of years', mercury:'A year here is only 88 Earth days', venus:'A day on Venus is longer than its year',
+  mars:'A Mars day is 24 hours 37 minutes', jupiter:'A day here lasts under 10 hours', saturn:'Saturn has the most known moons',
+  uranus:'Uranus is the coldest planet: −224 °C', neptune:'A year here is 165 Earth years' };
+
 /* ---------- meteor showers ---------- */
 let meteors = [], showerT = 0, nextShower = 420 + Math.random() * 500;
 function spawnMeteor() {
@@ -1461,7 +1497,7 @@ function drawHUD() {
 function render() {
   const lift = L ? -camY * 0.22 : 0;
   if (lift > 0.5) { c.fillStyle = theme().sky[0]; c.fillRect(0, 0, VW, VH); c.save(); c.translate(0, lift); drawBackground(); c.restore(); } else drawBackground();
-  if (L) { drawWorld(); drawHUD(); }
+  if (L) { drawWorld(); if (state === 'play' && TAGS[envName]) { c.save(); c.translate(0, lift); TAGS[envName](); c.restore(); } drawHUD(); }
 }
 
 /* ---------- loop ---------- */
