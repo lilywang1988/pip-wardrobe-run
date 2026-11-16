@@ -180,33 +180,33 @@ const THEMES = {
              fg:'rgba(255,255,255,.85)', fx:['drift','#ffffff',26], audio:{ song:'sky', pitch:1.1, echo:0.12, step:'cloud' } },
   /* Moon and planets: phys = [gravity, jump speed, run speed] */
   moon:    { label:'Moon', sky:['#000005','#12121e'], top:'#c9c9cf', dirt:'#8d8d96', dirt2:'#7b7b85', brick:'#a9adb8', brickLine:'#6f7380', spike:'#e6e6f0',
-             fg:'rgba(40,40,48,.9)', phys:[0.26, -8.6, 4.8], audio:{ song:'moon', pitch:0.9, lp:700, echo:0.3, step:'rock' } },
+             fg:'rgba(40,40,48,.9)', phys:[0.099, -12.6, 4.8], audio:{ song:'moon', pitch:0.9, lp:700, echo:0.3, step:'rock' } },
   mercury: { label:'Mercury', sky:['#050203','#5a2a10'], top:'#b59a84', dirt:'#7a6455', dirt2:'#69554a', brick:'#9a7a5c', brickLine:'#5e4633', spike:'#f0d8c0',
-             fg:'rgba(40,28,22,.9)', fx:['rise','#ffb060',16], phys:[0.4, -10.4, 4.8], audio:{ song:'mercury', pitch:1, lp:1100, echo:0.15, step:'rock' } },
+             fg:'rgba(40,28,22,.9)', fx:['rise','#ffb060',16], phys:[0.227, -12.6, 4.8], audio:{ song:'mercury', pitch:1, lp:1100, echo:0.15, step:'rock' } },
   venus:   { label:'Venus', sky:['#5a2a0a','#f2c14e'], top:'#e8b04a', dirt:'#a8622a', dirt2:'#8f4f20', brick:'#c7542a', brickLine:'#7a2a12', spike:'#ffe9b0',
-             fg:'rgba(70,28,10,.85)', fx:['rise','#ffc060',26], phys:[0.56, -12.2, 4.8], audio:{ song:'venus', pitch:0.78, lp:2600, echo:0.2, step:'rock' } },
+             fg:'rgba(70,28,10,.85)', fx:['rise','#ffc060',26], phys:[0.542, -12.6, 4.8], audio:{ song:'venus', pitch:0.78, lp:2600, echo:0.2, step:'rock' } },
   mars:    { label:'Mars', sky:['#b9794e','#f6dcc0'], top:'#d9683a', dirt:'#a8452a', dirt2:'#8f3820', brick:'#c98a5e', brickLine:'#8a5232', spike:'#f2d8c4',
-             fg:'rgba(90,32,18,.85)', fx:['drift','#f6d2b0',40], phys:[0.42, -10.7, 4.8], audio:{ song:'mars', pitch:1.18, echo:0.1, step:'rock' } },
+             fg:'rgba(90,32,18,.85)', fx:['drift','#f6d2b0',40], phys:[0.227, -12.6, 4.8], audio:{ song:'mars', pitch:1.18, echo:0.1, step:'rock' } },
   jupiter: { label:'Jupiter', sky:['#c9a27a','#f2e3c8'], top:'#f6e3c2', dirt:'#d9a878', dirt2:'#c48f62', brick:'#b5653a', brickLine:'#7d3f1f', spike:'#fff3dc',
-             fg:'rgba(255,240,215,.8)', fx:['streak','#fff0d8',16], phys:[0.78, -14.5, 5.3], audio:{ song:'jupiter', pitch:0.72, echo:0.25, step:'cloud' } },
+             fg:'rgba(255,240,215,.8)', fx:['streak','#fff0d8',16], phys:[1.518, -18.8, 7], audio:{ song:'jupiter', pitch:0.72, echo:0.25, step:'cloud' } },
   saturn:  { label:'Saturn', sky:['#2a2140','#f2deb0'], top:'#f7ecc8', dirt:'#e0c68a', dirt2:'#cdb074', brick:'#b8925a', brickLine:'#80623a', spike:'#fff6dc',
-             fg:'rgba(250,240,205,.8)', fx:['drift','#fff4d6',24], phys:[0.62, -12.8, 4.8], audio:{ song:'saturn', pitch:0.9, echo:0.3, step:'cloud' } },
+             fg:'rgba(250,240,205,.8)', fx:['drift','#fff4d6',24], phys:[0.638, -12.6, 4.8], audio:{ song:'saturn', pitch:0.9, echo:0.3, step:'cloud' } },
   uranus:  { label:'Uranus', sky:['#0a4a5e','#c9f7f0'], top:'#e8fffb', dirt:'#7fcfd0', dirt2:'#66b9bd', brick:'#4f9fb0', brickLine:'#2f7385', spike:'#f0ffff',
-             fg:'rgba(225,255,250,.8)', fx:['fall','#ffffff',46], phys:[0.54, -12, 4.8], audio:{ song:'uranus', pitch:1.25, echo:0.4, step:'ice' } },
+             fg:'rgba(225,255,250,.8)', fx:['fall','#ffffff',46], phys:[0.532, -12.6, 4.8], audio:{ song:'uranus', pitch:1.25, echo:0.4, step:'ice' } },
   neptune: { label:'Neptune', sky:['#030a2e','#4f8ff0'], top:'#cfe2ff', dirt:'#3f63c9', dirt2:'#3454b0', brick:'#2a3f9a', brickLine:'#182766', spike:'#e0ecff',
-             fg:'rgba(16,28,90,.85)', fx:['streak','#cfe2ff',22], phys:[0.66, -13.2, 5.0], audio:{ song:'neptune', pitch:0.85, echo:0.45, step:'ice' } }
+             fg:'rgba(16,28,90,.85)', fx:['streak','#cfe2ff',22], phys:[0.684, -12.6, 4.8], audio:{ song:'neptune', pitch:0.85, echo:0.45, step:'ice' } }
 };
 THEMES.snow.fx = ['fall', '#ffffff', 70]; THEMES.city.fx = ['rise', '#ffe696', 14];
 const WORLDS = {
-  earth:   { label:'Earth',   levels:['grass', 'ocean', 'sky'], blurb:'Earth — Easy crosses the grassland, Medium follows the ocean shore, and Hard climbs into the blue sky.' },
-  moon:    { label:'Moon',    blurb:'Moon — one-sixth gravity, so jumps are long and floaty. With no air, every sound is muffled. Earth hangs in the sky.' },
-  mercury: { label:'Mercury', blurb:'Mercury — a scorched, cratered rock under a giant Sun. Light gravity and no air.' },
-  venus:   { label:'Venus',   blurb:'Venus — volcanoes, lightning and a thick orange sky that deepens every sound.' },
-  mars:    { label:'Mars',    blurb:'Mars — red dunes, mesas and dust devils. Light gravity and thin, tinny air.' },
-  jupiter: { label:'Jupiter', blurb:'Jupiter — run the cloud tops past the Great Red Spot. Heavy gravity: quick, short hops and deep voices.' },
-  saturn:  { label:'Saturn',  blurb:'Saturn — golden cloud tops beneath the rings.' },
-  uranus:  { label:'Uranus',  blurb:'Uranus — ice spires and falling diamonds under a tilted ring. Sounds ring and echo.' },
-  neptune: { label:'Neptune', blurb:'Neptune — deep blue, racing winds and a dark storm. Slightly heavy gravity.' },
+  earth:   { label:'Earth',   levels:['grass', 'ocean', 'sky'], blurb:'Earth — gravity 1× (9.8 m/s²). Easy crosses the grassland, Medium follows the ocean shore, and Hard climbs into the blue sky.' },
+  moon:    { label:'Moon',    blurb:'Moon — gravity 0.17× Earth (1.6 m/s²). A full jump goes about six times higher and floats for seconds; tap for a small hop. No air, so sounds are muffled.' },
+  mercury: { label:'Mercury', blurb:'Mercury — gravity 0.38× Earth (3.7 m/s²): jumps go about 2.6 times higher. A scorched, cratered rock under a giant Sun.' },
+  venus:   { label:'Venus',   blurb:'Venus — gravity 0.90× Earth (8.9 m/s²): jumps are a touch higher. Volcanoes, lightning and a thick orange sky.' },
+  mars:    { label:'Mars',    blurb:'Mars — gravity 0.38× Earth (3.7 m/s²): jumps go about 2.6 times higher. Red dunes, mesas and dust devils.' },
+  jupiter: { label:'Jupiter', blurb:'Jupiter — gravity 2.53× Earth (24.8 m/s²). You fall fast, so power boots give short, snappy jumps and a quicker run across the cloud tops.' },
+  saturn:  { label:'Saturn',  blurb:'Saturn — gravity 1.06× Earth (10.4 m/s²): almost like home. Golden cloud tops beneath the rings.' },
+  uranus:  { label:'Uranus',  blurb:'Uranus — gravity 0.89× Earth (8.7 m/s²): jumps are a touch higher. Ice spires and falling diamonds under a tilted ring.' },
+  neptune: { label:'Neptune', blurb:'Neptune — gravity 1.14× Earth (11.2 m/s²): jumps are a little lower. Deep blue, racing winds and a dark storm.' },
   park:    { label:'Park',    blurb:'Classic: a sunny park.' },
   beach:   { label:'Beach',   blurb:'Classic: a sandy beach.' },
   snow:    { label:'Snowy hills', blurb:'Classic: snowy hills and pines.' },
@@ -428,7 +428,7 @@ const LEVELS = [
 
 /* ---------- state ---------- */
 let state = 'menu', levelIdx = 0, L = null, P = null, lives = 3, gemCount = 0, checked = false;
-let camX = 0, tick = 0, parts = [], flash = 0, toast = null, happyT = 0;
+let camX = 0, camY = 0, tick = 0, parts = [], flash = 0, toast = null, happyT = 0;
 const keys = { left:false, right:false, jump:false };
 let jumpBuf = 0;
 
@@ -440,7 +440,7 @@ function startLevel(i) {
 function spawn() {
   const sx = checked ? L.check : 2;
   P = { x:sx * T, y:GROUND * T - PH, w:PW, h:PH, vx:0, vy:0, ground:false, face:1, coyote:0, run:0, rider:null, inv:60, squash:0 };
-  camX = Math.max(0, Math.min(P.x - VW * 0.4, L.w * T - VW));
+  camX = Math.max(0, Math.min(P.x - VW * 0.4, L.w * T - VW)); camY = 0;
 }
 
 const solid = (tx, ty) => tx < 0 || tx >= L.w ? true : (ty < 0 || ty >= ROWS ? false : (L.grid[tx][ty] === 1 || L.grid[tx][ty] === 2));
@@ -486,7 +486,7 @@ function step() {
   if (P.coyote > 0) P.coyote--;
   if (jumpBuf > 0 && P.coyote > 0) { P.vy = JUMP; jumpBuf = 0; P.coyote = 0; P.rider = null; sfx.jump(); P.squash = -0.16; }
   if (!keys.jump && P.vy < -5) P.vy = -5;
-  P.vy = Math.min(14, P.vy + GRAV);
+  P.vy = Math.min(18, P.vy + GRAV);
 
   P.x += P.vx;
   {
@@ -563,7 +563,7 @@ function step() {
     }
   }
   if (!checked && P.x > L.check * T) { checked = true; burst(L.check * T + 6, GROUND * T - 60, '#ffd45e', 14); sfx.check(); }
-  if (hit(P, { x:L.goal * T + 6, y:GROUND * T - 60, w:T * 1.6, h:60 })) finish();
+  if (hit(P, { x:L.goal * T + 6, y:-6000, w:T * 1.6, h:6000 + GROUND * T })) finish();
 
   for (const p of parts) { p.x += p.vx; p.y += p.vy; p.vy += 0.3; p.life--; }
   parts = parts.filter(p => p.life > 0);
@@ -571,6 +571,7 @@ function step() {
   const target = P.x - VW * 0.4;
   camX += (target - camX) * 0.12;
   camX = Math.max(0, Math.min(camX, L.w * T - VW));
+  camY += (Math.min(0, P.y - 150) - camY) * 0.14;
 }
 
 function enemyTouch(e, col) {
@@ -1310,7 +1311,7 @@ function drawForeground() {
 
 function drawWorld() {
   const th = theme(), ts = tiles();
-  c.save(); c.translate(-Math.round(camX), 0);
+  c.save(); c.translate(-Math.round(camX), -Math.round(camY));
   const x0 = Math.max(0, Math.floor(camX / T) - 1), x1 = Math.min(L.w - 1, Math.floor((camX + VW) / T) + 1);
   const cell = (tx, ty) => tx < 0 || tx >= L.w || ty < 0 || ty >= ROWS ? 0 : L.grid[tx][ty];
   /* shadows cast below floating blocks */
@@ -1347,6 +1348,7 @@ function drawWorld() {
   }
   { /* home */
     const x = L.goal * T, y = GROUND * T, dog = isDog(), wall = dog ? '#c9713d' : '#8e6fd0', roof = dog ? '#8f3f1f' : '#5c3fa3';
+    c.fillStyle = lin(c, x, 0, x + 76, 0, [[0, 'rgba(255,230,140,0)'], [0.5, 'rgba(255,230,140,.22)'], [1, 'rgba(255,230,140,0)']]); c.fillRect(x, y - 3000, 76, 2900);
     shadow(c, x + 44, y + 2, 56, 0.25);
     c.fillStyle = lin(c, x, 0, x + 76, 0, [[0, tint(wall, 0.25)], [0.6, wall], [1, shade(wall, 0.6)]]); c.fillRect(x, y - 58, 76, 58);
     c.strokeStyle = 'rgba(0,0,0,.18)'; c.lineWidth = 1; c.beginPath(); for (let i = 1; i < 5; i++) { c.moveTo(x, y - 58 + i * 12); c.lineTo(x + 76, y - 58 + i * 12); } c.stroke();
@@ -1450,7 +1452,11 @@ function drawHUD() {
   if (flash > 0) { c.fillStyle = `rgba(255,80,80,${flash / 30})`; c.fillRect(0, 0, VW, VH); }
 }
 
-function render() { drawBackground(); if (L) { drawWorld(); drawHUD(); } }
+function render() {
+  const lift = L ? -camY * 0.22 : 0;
+  if (lift > 0.5) { c.fillStyle = theme().sky[0]; c.fillRect(0, 0, VW, VH); c.save(); c.translate(0, lift); drawBackground(); c.restore(); } else drawBackground();
+  if (L) { drawWorld(); drawHUD(); }
+}
 
 /* ---------- loop ---------- */
 let last = 0, acc = 0;
