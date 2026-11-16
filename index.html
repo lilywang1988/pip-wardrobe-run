@@ -50,6 +50,12 @@
   .big:disabled { background:var(--panel2); color:#8088a5; cursor:not-allowed; }
   .big.ghost { background:var(--panel2); color:var(--ink); border:2px solid var(--line); }
   .help { margin:12px 0 0; font-size:12.5px; opacity:.72; line-height:1.5; }
+  #worldInfo { margin-top:10px; padding:12px 14px; border-radius:12px; background:var(--panel2); border:1px solid var(--line); font-size:13px; line-height:1.5; }
+  #worldInfo h3 { margin:0 0 4px; font-size:16px; color:var(--accent); }
+  #worldInfo p { margin:0 0 6px; opacity:.9; }
+  #worldInfo .g { opacity:.75; font-size:12.5px; }
+  #worldInfo b { display:block; margin-top:6px; font-size:11px; letter-spacing:1.2px; text-transform:uppercase; opacity:.7; }
+  #worldInfo ul { margin:4px 0 0; padding-left:18px; } #worldInfo li { margin:2px 0; }
   #solar { width:100%; display:block; border-radius:14px; border:2px solid var(--line); cursor:pointer; background:#05071a; touch-action:manipulation; }
   #msg .card { width:min(420px,100%); text-align:center; }
   #msg p { margin:6px 0 16px; opacity:.85; }
@@ -91,7 +97,7 @@
     <h2>Where to run</h2>
     <canvas id="solar" width="760" height="236" role="img" aria-label="Solar system map. Click a planet or the Moon to run there."></canvas>
     <div class="row" style="margin:8px 0 0"><span style="width:auto">Classic Earth scenes</span><div id="envs"></div></div>
-    <p class="help" id="worldInfo" style="margin-top:8px"></p>
+    <div id="worldInfo"></div>
     <div id="menuLevels">
       <h2>Round</h2>
       <div class="levels" id="levelBtns"></div>
@@ -1511,6 +1517,28 @@ $('msgB').onclick = toMenu; $('quitBtn').onclick = toMenu;
 $('pauseBtn').onclick = () => { $('pauseBtn').blur(); togglePause(); };
 $('resumeBtn').onclick = togglePause;
 
+/* short introductions and things to observe on each world */
+const FACTS = {
+  mercury: { intro:'The smallest planet and the closest to the Sun. A year lasts only 88 Earth days, and it has almost no air and no moons.',
+    see:['The Sun looks about three times wider than it does from Earth.', 'Craters everywhere: with no air or weather, nothing wears them away.', 'Extreme temperatures, from about 430 °C by day to −180 °C at night.'] },
+  venus: { intro:'Earth\u2019s neighbour and near-twin in size, wrapped in a thick carbon-dioxide atmosphere that makes it the hottest planet, around 465 °C.',
+    see:['Volcanoes: Venus has more of them than any other planet.', 'Yellow clouds of sulfuric acid, with lightning flashing inside them.', 'It spins backwards, and one day there lasts longer than its year.'] },
+  earth: { intro:'Our home, and the only world known to have life. About 71% of its surface is ocean, and its air makes the sky blue.',
+    see:['Green grassland with trees and flowers in the Easy round.', 'The open ocean in the Medium round.', 'Clouds and blue sky high above the ground in the Hard round.'] },
+  moon: { intro:'Earth\u2019s only natural satellite, about 384,000 km away. It always shows us the same face, and twelve people have walked on it.',
+    see:['Earth hanging in a black sky: with no air, the sky is dark even in daytime.', 'Craters and grey dust, where footprints can last for millions of years.', 'One-sixth gravity, so every jump is huge and slow.'] },
+  mars: { intro:'The Red Planet, coloured by rusty iron dust. A day is 24 hours 37 minutes, and it has two tiny moons, Phobos and Deimos.',
+    see:['Olympus Mons, the tallest volcano in the solar system, about 22 km high.', 'Flat-topped mesas and swirling dust devils.', 'A butterscotch-coloured sky, with polar ice caps at the ends of the planet.'] },
+  jupiter: { intro:'The largest planet: more than 1,300 Earths would fit inside. It is a gas giant with no solid ground, and it spins once in under 10 hours.',
+    see:['The Great Red Spot, a storm wider than Earth that has raged for centuries.', 'Striped cloud bands racing in opposite directions.', 'Lightning in the clouds, and dozens of moons, four of them found by Galileo.'] },
+  saturn: { intro:'The ringed planet. Its rings are billions of pieces of ice and rock, and Saturn is so light for its size that it would float in water.',
+    see:['The great rings arching across the sky.', 'Golden cloud tops and drifting ice sparkles.', 'It has the most known moons of any planet, including giant Titan.'] },
+  uranus: { intro:'An ice giant that rolls around the Sun on its side, tilted about 98 degrees. Methane in its air gives it a blue-green colour.',
+    see:['Its thin rings standing almost upright because of the sideways tilt.', 'Diamond rain: scientists think diamonds may form deep inside.', 'The coldest atmosphere of any planet, about −224 °C.'] },
+  neptune: { intro:'The farthest planet, found in 1846 by mathematics before anyone saw it. One trip around the Sun takes 165 Earth years.',
+    see:['The fastest winds in the solar system, up to about 2,000 km/h.', 'A great dark storm drifting through deep blue clouds.', 'Triton, a large moon that orbits backwards.'] }
+};
+
 /* solar-system picker */
 const SOLAR = [['mercury', 92, -0.55, 8], ['venus', 140, 0.5, 11], ['earth', 198, -0.32, 13], ['mars', 262, 0.42, 10], ['jupiter', 352, -0.2, 26], ['saturn', 470, 0.22, 20], ['uranus', 584, -0.26, 15], ['neptune', 690, 0.03, 15]];
 let solarHover = null;
@@ -1613,7 +1641,9 @@ function buildMenu() {
     const b = document.createElement('button'); b.className = 'chip' + (worldName === k ? ' sel' : ''); b.textContent = WORLDS[k].label;
     b.onclick = () => pickWorld(k); ev.appendChild(b);
   });
-  $('worldInfo').textContent = WORLDS[worldName].blurb;
+  { const w = WORLDS[worldName], f = FACTS[worldName];
+    $('worldInfo').innerHTML = f ? `<h3>${w.label}</h3><p>${f.intro}</p><p class="g">${w.blurb.replace(/^[^—]*— /, '').replace(/^./, m => m.toUpperCase())}</p><b>Special things to look for</b><ul>${f.see.map(t => `<li>${t}</li>`).join('')}</ul>`
+                                 : `<h3>${w.label}</h3><p>${w.blurb}</p>`; }
   const box = $('levelBtns'); box.innerHTML = '';
   [['Easy', 'Round 1'], ['Medium', 'Round 2'], ['Hard', 'Round 3 · final']].forEach(([n, s], i) => {
     const b = document.createElement('button'); b.className = 'big'; b.disabled = i > unlocked;
