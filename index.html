@@ -56,13 +56,10 @@
   #worldInfo .g { opacity:.75; font-size:12.5px; }
   #worldInfo b { display:block; margin-top:6px; font-size:11px; letter-spacing:1.2px; text-transform:uppercase; opacity:.7; }
   #worldInfo ul { margin:4px 0 0; padding-left:18px; } #worldInfo li { margin:2px 0; }
-  .player { display:flex; gap:14px; align-items:center; flex-wrap:wrap; }
-  #avatar { width:72px; height:72px; border-radius:50%; flex:none; }
-  .pf { flex:1; min-width:240px; display:flex; flex-direction:column; gap:7px; }
-  .pf label:not(.chip) { display:flex; align-items:center; gap:8px; font-size:13px; }
-  .pf label:not(.chip) input { flex:1; min-width:0; font:inherit; color:var(--ink); background:var(--panel2); border:2px solid var(--line); border-radius:10px; padding:.35em .7em; }
-  .pf input:focus { outline:none; border-color:var(--accent); }
-  label.chip { cursor:pointer; }
+  .player { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  .player label { display:flex; align-items:center; gap:8px; font-size:13px; flex:1; min-width:200px; }
+  .player input { flex:1; min-width:0; font:inherit; color:var(--ink); background:var(--panel2); border:2px solid var(--line); border-radius:10px; padding:.35em .7em; }
+  .player input:focus { outline:none; border-color:var(--accent); }
   .pnote { margin:8px 0 0; font-size:12px; opacity:.65; }
   #badgeGrid { display:grid; grid-template-columns:repeat(5, 1fr); gap:10px; }
   .bcell { display:flex; flex-direction:column; align-items:center; gap:5px; text-align:center; }
@@ -112,18 +109,11 @@
     </div>
     <h2>Player</h2>
     <div class="player">
-      <canvas id="avatar" width="128" height="128" role="img" aria-label="Your picture"></canvas>
-      <div class="pf">
-        <label>Name <input id="pName" type="text" maxlength="28" placeholder="Your name" autocomplete="off"></label>
-        <label>Email <input id="pEmail" type="email" maxlength="60" placeholder="Optional" autocomplete="off"></label>
-        <div class="row" style="margin:0">
-          <label class="chip" for="pPhoto">Choose a photo</label><input id="pPhoto" type="file" accept="image/*" hidden>
-          <button class="chip" id="pPet">Use my pet as my picture</button>
-          <button class="chip sel" id="badgesBtn">My badges</button>
-        </div>
-      </div>
+      <label>Name <input id="pName" type="text" maxlength="28" placeholder="Your name" autocomplete="off"></label>
+      <label>Email <input id="pEmail" type="email" maxlength="60" placeholder="Optional" autocomplete="off"></label>
+      <button class="chip sel" id="badgesBtn">My badges</button>
     </div>
-    <p class="pnote">Your name, email and photo are optional. They stay in this browser and are only printed on the badges you download.</p>
+    <p class="pnote">Both are optional. They stay in this browser and are only printed on the badges you download.</p>
     <h2>Where to run</h2>
     <canvas id="solar" width="760" height="236" role="img" aria-label="Solar system map. Click the Sun, a planet or the Moon to run there."></canvas>
     <div id="worldInfo"></div>
@@ -145,7 +135,7 @@
 <div id="badges" class="overlay">
   <div class="card">
     <h1 id="badgeTitle">My badges</h1>
-    <p class="sub">Finish all three rounds on a world to earn its badge. Downloaded badges show your name, picture and email if you filled them in.</p>
+    <p class="sub">Finish all three rounds on a world to earn its badge. Downloaded badges show your pet, plus your name and email if you filled them in.</p>
     <div id="saveBox" style="display:none"><img id="saveImg" alt="Badge picture to save"><p id="saveNote"></p></div>
     <div id="badgeGrid"></div>
     <div class="levels" style="grid-template-columns:1fr 1fr; margin-top:14px">
@@ -201,7 +191,7 @@ const trapName = () => isDog() ? 'fish' : 'bone';
 function load() {
   try {
     const s = JSON.parse(localStorage.getItem('paws-run') || 'null');
-    if (s) { Object.assign(pet, s.pet || {}); if (s.opts) { opts.music = s.opts.music !== false; opts.sound = s.opts.sound !== false; } if (WORLDS[s.world]) worldName = s.world; else if (WORLDS[s.env]) worldName = s.env; if (s.prog && typeof s.prog === 'object') prog = s.prog; if (s.player) { player.name = String(s.player.name || ''); player.email = String(s.player.email || ''); setPhoto(String(s.player.photo || '')); } }
+    if (s) { Object.assign(pet, s.pet || {}); if (s.opts) { opts.music = s.opts.music !== false; opts.sound = s.opts.sound !== false; } if (WORLDS[s.world]) worldName = s.world; else if (WORLDS[s.env]) worldName = s.env; if (s.prog && typeof s.prog === 'object') prog = s.prog; if (s.player) { player.name = String(s.player.name || ''); player.email = String(s.player.email || ''); } }
   } catch (e) {}
   setEnv(0);
   if (!BREEDS[pet.species]) pet.species = 'dog';
@@ -2127,14 +2117,6 @@ $('badgesBtn').onclick = () => openBadges();
 $('pName').addEventListener('input', e => { player.name = e.target.value.slice(0, 28); save(); });
 $('pEmail').addEventListener('input', e => { player.email = e.target.value.slice(0, 60); save(); });
 for (const id of ['pName', 'pEmail']) $(id).addEventListener('keydown', e => e.stopPropagation());
-$('pPhoto').addEventListener('change', e => {
-  const f = e.target.files && e.target.files[0]; if (!f || !/^image\//.test(f.type)) return;
-  const rd = new FileReader(); rd.onload = () => { const im = new Image(); im.onload = () => {
-    const cv2 = document.createElement('canvas'); cv2.width = cv2.height = 256; const k = Math.max(256 / im.width, 256 / im.height);
-    cv2.getContext('2d').drawImage(im, 128 - im.width * k / 2, 128 - im.height * k / 2, im.width * k, im.height * k);
-    setPhoto(cv2.toDataURL('image/jpeg', 0.85)); save(); }; im.src = rd.result; }; rd.readAsDataURL(f); e.target.value = '';
-});
-$('pPet').onclick = () => { setPhoto(''); save(); };
 
 /* solar-system picker */
 const SOLAR = [['mercury', 92, -0.55, 8], ['venus', 140, 0.5, 11], ['earth', 198, -0.32, 13], ['mars', 262, 0.42, 10], ['jupiter', 352, -0.2, 26], ['saturn', 470, 0.22, 20], ['uranus', 584, -0.26, 15], ['neptune', 690, 0.03, 15]];
@@ -2202,7 +2184,6 @@ $('solar').addEventListener('pointerleave', () => { solarHover = null; });
 $('solar').addEventListener('click', ev => { const k = solarPick(ev); if (k) pickWorld(k); });
 
 function drawPreview() {
-  { const ag = $('avatar').getContext('2d'); ag.clearRect(0, 0, 128, 128); drawAvatar(ag, 64, 64, 58); }
   const pv = $('preview').getContext('2d');
   pv.clearRect(0, 0, 170, 140);
   pv.fillStyle = 'rgba(0,0,0,.25)'; pv.beginPath(); pv.ellipse(80, 120, 50, 8, 0, 0, 7); pv.fill();
