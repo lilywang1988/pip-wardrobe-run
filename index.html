@@ -64,6 +64,7 @@
   #badgeGrid { display:grid; grid-template-columns:repeat(5, 1fr); gap:10px; }
   .bcell { display:flex; flex-direction:column; align-items:center; gap:5px; text-align:center; }
   .bcell canvas { width:100%; border-radius:10px; } .bcell small { font-size:11px; opacity:.75; min-height:2.4em; }
+  .bact { display:flex; gap:5px; flex-wrap:wrap; justify-content:center; } .bact .chip { padding:.25em .6em; font-size:12px; }
   .bcell.new canvas { box-shadow:0 0 0 3px var(--accent); }
   .chip:disabled { opacity:.4; cursor:not-allowed; }
   #saveBox { display:flex; gap:14px; align-items:center; margin-bottom:14px; padding:12px; border-radius:12px; background:var(--panel2); border:1px solid var(--line); flex-wrap:wrap; }
@@ -135,11 +136,12 @@
 <div id="badges" class="overlay">
   <div class="card">
     <h1 id="badgeTitle">My badges</h1>
-    <p class="sub">Finish all three rounds on a world to earn its badge. Downloaded badges show your pet, plus your name and email if you filled them in.</p>
+    <p class="sub">Finish all three rounds on a world to earn its badge. Badges show your pet, plus your name and email if you filled them in. Download them, or email them to yourself.</p>
     <div id="saveBox" style="display:none"><img id="saveImg" alt="Badge picture to save"><p id="saveNote"></p></div>
     <div id="badgeGrid"></div>
-    <div class="levels" style="grid-template-columns:1fr 1fr; margin-top:14px">
-      <button class="big" id="certBtn">Download all on one certificate</button>
+    <div class="levels" style="grid-template-columns:1fr 1fr 1fr; margin-top:14px">
+      <button class="big" id="certBtn">Download certificate</button>
+      <button class="big" id="certMail">Email certificate</button>
       <button class="big ghost" id="badgesClose">Back</button>
     </div>
   </div>
@@ -2094,6 +2096,24 @@ async function savePicture(cv2, filename) {
   } catch (e) { if (e && e.code === 'declined') { $('saveNote').textContent = 'Save cancelled. You can also right-click (or press and hold) the picture to save it.'; return; } }
   $('saveNote').textContent = 'To keep it, right-click (or press and hold) the picture and choose “Save image”.';
 }
+/* emailing: share the picture to the player's own mail app where the device allows it, otherwise save it and offer a ready-made email */
+async function emailPicture(cv2, filename, what) {
+  const to = player.email.trim(), name = player.name.trim(), subject = 'My Paws Run ' + what, body = `Here is my Paws Run ${what}${name ? ', from ' + name : ''}!`;
+  $('saveImg').src = cv2.toDataURL('image/png'); $('saveNote').textContent = 'Preparing your picture…'; $('saveBox').style.display = '';
+  try {
+    const blob = await new Promise(r => cv2.toBlob(r, 'image/png')), file = new File([blob], filename, { type:'image/png' });
+    if (navigator.canShare && navigator.canShare({ files:[file] })) {
+      await navigator.share({ files:[file], title: subject, text: body });
+      $('saveNote').textContent = 'Choose your email app in the share menu: the picture is attached.' + (to ? ' Send it to ' + to + '.' : ''); return;
+    }
+  } catch (e) { if (e && e.name === 'AbortError') { $('saveNote').textContent = 'Sharing cancelled.'; return; } }
+  await savePicture(cv2, filename);
+  const note = $('saveNote'), a = document.createElement('a');
+  a.href = `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body + '\n\n(Attach the picture saved as ' + filename + '.)')}`;
+  a.textContent = to ? 'Open an email to ' + to : 'Open a new email'; a.style.color = 'var(--accent)';
+  note.textContent = 'This device cannot attach the picture automatically. First save it (' + filename + '), then: ';
+  note.append(a, document.createTextNode(' and attach the picture before sending.' + (to ? '' : ' Add an email address in the menu to fill in the “To” line.')));
+}
 const slug = s => (s || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 function openBadges(focus) {
   const grid = $('badgeGrid'); grid.innerHTML = ''; $('saveBox').style.display = 'none';
@@ -2105,13 +2125,17 @@ function openBadges(focus) {
     const st = document.createElement('small'); st.textContent = hasBadge(w) ? 'Earned ' + niceDate(prog[w].date) : `${[0, 1, 2].filter(i => done(w, i)).length} of 3 rounds done`;
     const b = document.createElement('button'); b.className = 'chip'; b.textContent = 'Download'; b.disabled = !hasBadge(w);
     b.onclick = () => savePicture(badgeCanvas(w), `paws-run-${w}-badge${player.name.trim() ? '-' + slug(player.name) : ''}.png`);
-    cell.append(cv2, st, b); grid.appendChild(cell);
+    const m = document.createElement('button'); m.className = 'chip'; m.textContent = 'Email'; m.disabled = !hasBadge(w);
+    m.onclick = () => emailPicture(badgeCanvas(w), `paws-run-${w}-badge${player.name.trim() ? '-' + slug(player.name) : ''}.png`, WORLDS[w].label + ' Explorer badge');
+    const acts = document.createElement('div'); acts.className = 'bact'; acts.append(b, m);
+    cell.append(cv2, st, acts); grid.appendChild(cell);
   });
-  $('certBtn').disabled = badgeCount() === 0;
+  $('certBtn').disabled = $('certMail').disabled = badgeCount() === 0;
   $('menu').classList.remove('on'); $('msg').classList.remove('on'); $('badges').classList.add('on');
   if (focus && hasBadge(focus)) { $('saveImg').src = badgeCanvas(focus).toDataURL('image/png'); $('saveNote').textContent = `You earned the ${WORLDS[focus].label} Explorer badge! Use Download to keep it.`; $('saveBox').style.display = ''; }
 }
 $('certBtn').onclick = () => savePicture(certificateCanvas(), `paws-run-badges${player.name.trim() ? '-' + slug(player.name) : ''}.png`);
+$('certMail').onclick = () => emailPicture(certificateCanvas(), `paws-run-badges${player.name.trim() ? '-' + slug(player.name) : ''}.png`, 'badge certificate');
 $('badgesClose').onclick = () => { $('badges').classList.remove('on'); if (state === 'pause') openMenu(true); else { state = 'menu'; L = null; openMenu(false); } };
 $('badgesBtn').onclick = () => openBadges();
 $('pName').addEventListener('input', e => { player.name = e.target.value.slice(0, 28); save(); });
